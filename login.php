@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 include 'config/koneksi.php';
 
 $error = "";
@@ -18,13 +18,12 @@ if (isset($_POST['submit'])) {
         if ($conn->rowCount() > 0) {
             $data = $conn->fetch(PDO::FETCH_ASSOC);
 
-            if (password_verify($password, $data['password'])) {
+            if (password_verify($password, $data['password']) || md5($password) === $data['password']){
                 $_SESSION['login']        = true;
-                $_SESSION['id_pelanggan'] = $data['id_pelanggan'] ?? $data['id'];
                 $_SESSION['nama_lengkap'] = $data['nama_lengkap'];
                 $_SESSION['email']        = $data['email'];
 
-                header("Location: index.php");
+                header("Location: dashboard.php");
                 exit;
             } else {
                 $error = "Kata sandi yang Anda masukkan salah";
@@ -35,10 +34,6 @@ if (isset($_POST['submit'])) {
     }
 }
 ?>
-
-
-
-
 <!DOCTYPE html>
 <html lang="id">
 <head>

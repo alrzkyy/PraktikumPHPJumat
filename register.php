@@ -6,11 +6,11 @@ $error = "";
 if (isset($_POST['submit'])) {
     $nama = $_POST['nama'];
     $email = $_POST['email'];
-    $nomor = $_POST['nomor'];
+    $nomor_hp = $_POST['no_hp'];
     $password = $_POST['password'];
     $ulangipassword = $_POST['ulangipassword'];
 
-    if (empty($nama) || empty($email) || empty($nomor) || empty($password)) {
+    if (empty($nama) || empty($email) || empty($nomor_hp) || empty($password)) {
         $error = "Harap isi semua field yang kosong";
     } elseif (strlen($password) < 6) {
         $error = "Kata sandi minimal 6 karakter";
@@ -26,12 +26,12 @@ if (isset($_POST['submit'])) {
         } else {
             $passwordhash = password_hash($password, PASSWORD_DEFAULT);
             
-            $query = "INSERT INTO tb_pelanggan (nama_lengkap, email, nomor, password) VALUES (:nama_lengkap, :email, :nomor, :password)";
+            $query = "INSERT INTO tb_pelanggan (nama_lengkap, email, no_hp, password) VALUES (:nama_lengkap, :email, :no_hp, :password)";
             $conn = $koneksi->prepare($query);
             $conn->execute([
                 ':nama_lengkap' => $nama,
                 ':email' => $email,
-                ':nomor' => $nomor,
+                ':no_hp' => $nomor_hp,
                 ':password' => $passwordhash
             ]);
             
@@ -185,7 +185,7 @@ if (isset($_POST['submit'])) {
 
             <div class="form-group">
                 <label>Nomor WhatsApp / HP</label>
-                <input type="tel" name="nomor" class="form-control" placeholder="081234567890" required>
+                <input type="tel" name="no_hp" class="form-control" placeholder="081234567890" required>
             </div>
 
             <div class="form-row">

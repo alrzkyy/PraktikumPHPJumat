@@ -1,3 +1,13 @@
+<?php
+include 'config/koneksi.php';
+
+
+if(isset($_SESSION['tb_pelanggan'])){
+    header("location:login.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
