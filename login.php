@@ -1,7 +1,39 @@
 <?php
+session_start();
 include 'config/koneksi.php';
 
+$error = "";
 
+if (isset($_POST['submit'])) {
+    $email    = $_POST['email'];
+    $password = $_POST['password'];
+
+    if (empty($email) || empty($password)) {
+        $error = "Harap isi email dan kata sandi Anda";
+    } else {
+        $query = "SELECT * FROM tb_pelanggan WHERE email = :email";
+        $conn  = $koneksi->prepare($query);
+        $conn->execute([':email' => $email]);
+
+        if ($conn->rowCount() > 0) {
+            $data = $conn->fetch(PDO::FETCH_ASSOC);
+
+            if (password_verify($password, $data['password'])) {
+                $_SESSION['login']        = true;
+                $_SESSION['id_pelanggan'] = $data['id_pelanggan'] ?? $data['id'];
+                $_SESSION['nama_lengkap'] = $data['nama_lengkap'];
+                $_SESSION['email']        = $data['email'];
+
+                header("Location: index.php");
+                exit;
+            } else {
+                $error = "Kata sandi yang Anda masukkan salah";
+            }
+        } else {
+            $error = "Email tidak terdaftar";
+        }
+    }
+}
 ?>
 
 
@@ -123,22 +155,22 @@ include 'config/koneksi.php';
             <p>Portal Loyalitas & Pemesanan Member</p>
         </div>
 
-        <div class="alert-box">
-            <span>Pesan notifikasi sistem ditampilkan di sini</span>
-        </div>
+        <?php if (!empty($error)) : ?>
+            <div class="alert-box">
+                <span><?= $error; ?></span>
+            </div>
+        <?php endif; ?>
 
         <form action="" method="POST">
             <div class="form-group">
                 <label>Email Terdaftar</label>
-                <input type="email" class="form-control" placeholder="nama@email.com" required>
+                <input type="email" name="email" class="form-control" placeholder="nama@email.com" required>
             </div>
-
             <div class="form-group">
                 <label>Kata Sandi</label>
-                <input type="password" class="form-control" placeholder="Masukkan kata sandi" required>
+                <input type="password" name="password" class="form-control" placeholder="Masukkan kata sandi" required>
             </div>
-
-            <button type="submit" class="btn-submit">Masuk ke Akun</button>
+            <button type="submit" name="submit" class="btn-submit">Masuk ke Akun</button>
         </form>
 
         <div class="auth-footer">

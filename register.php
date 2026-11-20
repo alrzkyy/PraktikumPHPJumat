@@ -91,9 +91,9 @@ if (isset($_POST['submit'])) {
             border-radius: 8px;
             font-size: 13px;
             margin-bottom: 20px;
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            border: 1px solid #c8e6c9;
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
             display: block;
         }
         .form-group {
@@ -166,9 +166,11 @@ if (isset($_POST['submit'])) {
             <p>Formulir Pendaftaran Member Baru</p>
         </div>
 
-        <div class="alert-box">
-            <span>Pesan status pendaftaran ditampilkan di sini</span>
-        </div>
+        <?php if (!empty($error)) : ?>
+            <div class="alert-box">
+                <span><?= $error; ?></span>
+            </div>
+        <?php endif; ?>
 
         <form action="" method="POST">
             <div class="form-group">
@@ -197,7 +199,7 @@ if (isset($_POST['submit'])) {
                 </div>
             </div>
 
-            <button type="submit" name="btn-masuk" class="btn-submit">Daftarkan Akun Member</button>
+            <button type="submit" name="submit" class="btn-submit">Daftarkan Akun Member</button>
         </form>
 
         <div class="auth-footer">
