@@ -1,25 +1,44 @@
 <?php
 include 'config/koneksi.php';
 
-if(isset($_POST['btn-submit'])) {
-    $nama=$_POST['nama'];
-    $email=$_POST['email'];
-    $nomor=$_POST['nomor'];    
-    $password=$_POST['password'];    
-    $ulangipassword=$_POST['ulangipassword'];
+$error = "";
 
-    $query = "insert into tb_pelanggan (nama, email, nomor, password, ulangipassword) ";
-    $conn=$koneksi->prepare($query);
-    $conn->execute([
-     ':nama_lengkap' => $_POST['nama'],
-     ':email' => $_POST['email'],
-     ':no_hp' => $_POST['nomor'],
-     ':passsword' => $_POST['password']
-    ]);
-    $hasil=$conn->fetch();
-    if($conn->rowCount()>0){
-     $error = "username telah terdaftar";
- }
+if (isset($_POST['submit'])) {
+    $nama = $_POST['nama'];
+    $email = $_POST['email'];
+    $nomor = $_POST['nomor'];
+    $password = $_POST['password'];
+    $ulangipassword = $_POST['ulangipassword'];
+
+    if (empty($nama) || empty($email) || empty($nomor) || empty($password)) {
+        $error = "Harap isi semua field yang kosong";
+    } elseif (strlen($password) < 6) {
+        $error = "Kata sandi minimal 6 karakter";
+    } elseif ($password !== $ulangipassword) {
+        $error = "Konfirmasi kata sandi tidak cocok";
+    } else {
+        $query = "SELECT * FROM tb_pelanggan WHERE email = :email";
+        $conn = $koneksi->prepare($query);
+        $conn->execute([':email' => $email]);
+
+        if ($conn->rowCount() > 0) {
+            $error = "Email sudah terdaftar";
+        } else {
+            $passwordhash = password_hash($password, PASSWORD_DEFAULT);
+            
+            $query = "INSERT INTO tb_pelanggan (nama_lengkap, email, nomor, password) VALUES (:nama_lengkap, :email, :nomor, :password)";
+            $conn = $koneksi->prepare($query);
+            $conn->execute([
+                ':nama_lengkap' => $nama,
+                ':email' => $email,
+                ':nomor' => $nomor,
+                ':password' => $passwordhash
+            ]);
+            
+            header("Location: login.php");
+            exit;
+        }
+    }
 }
 ?>
 
